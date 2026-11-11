@@ -1,8 +1,8 @@
-"""Crea data/crm.db e lo popola con dati intenzionalmente 'sporchi'
-per dimostrare controlli di data quality: completezza, duplicati,
-formato/validita, integrita referenziale.
+"""Creates data/crm.db and seeds it with intentionally 'dirty' data
+to demonstrate data quality checks: completeness, duplicates,
+format/validity, referential integrity.
 
-Idempotente: ricrea le tabelle da zero ogni esecuzione.
+Idempotent: recreates the tables from scratch on every run.
 """
 import sqlite3
 from pathlib import Path
@@ -33,14 +33,14 @@ CREATE TABLE orders (
 CUSTOMERS = [
     (1, "Maria Rossi", "maria.rossi@example.com", "+39 333 1234567", "2024-01-10"),
     (2, "Luca Bianchi", "luca.bianchi@example.com", "+39 333 7654321", "2024-02-15"),
-    # completezza: nome ed email mancanti
+    # completeness: missing name and email
     (3, None, None, "333 0000000", "2024-02-20"),
     (4, "Anna Verdi", "", "+39 334 1112222", "2024-03-01"),
-    # duplicato: stessa email di id=1, record diverso
+    # duplicate: same email as id=1, different record
     (5, "Maria Rossi", "maria.rossi@example.com", "+39 333 9998888", "2024-03-05"),
-    # formato non valido: email senza @, telefono con lettere
-    (6, "Paolo Neri", "paolo.neri_at_example.com", "non-un-numero", "2024-03-10"),
-    # formato non valido: data malformata
+    # invalid format: email without @, non-numeric phone
+    (6, "Paolo Neri", "paolo.neri_at_example.com", "not-a-number", "2024-03-10"),
+    # invalid format: malformed date
     (7, "Giulia Ferrari", "giulia.ferrari@example.com", "+39 335 4445555", "10/03/2024???"),
     (8, "Marco Costa", "marco.costa@example.com", "+39 336 5556666", "2024-04-01"),
 ]
@@ -49,7 +49,7 @@ ORDERS = [
     (1, 1, 120.50, "completed", "2024-01-15"),
     (2, 2, 89.90, "completed", "2024-02-20"),
     (3, 8, 45.00, "pending", "2024-04-02"),
-    # integrita referenziale: customer_id=99 non esiste in customers
+    # referential integrity: customer_id=99 doesn't exist in customers
     (4, 99, 230.00, "completed", "2024-04-10"),
 ]
 

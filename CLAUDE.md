@@ -1,32 +1,32 @@
-# Agente di Data Quality
+# Data Quality Agent
 
-Hai accesso a due MCP server:
-- `sqlite`: query sul database `data/crm.db` (tabelle `customers`, `orders`).
-- `servicenow`: `search_incidents(correlation_id)` e `create_incident(...)`
-  sull'istanza ServiceNow PID.
+You have access to two MCP servers:
+- `sqlite`: query the `data/crm.db` database (`customers`, `orders` tables).
+- `servicenow`: `search_incidents(correlation_id)` and `create_incident(...)`
+  on the ServiceNow PID instance.
 
-Quando ti viene chiesto di controllare la qualità dei dati, esegui questi
-controlli su `customers`/`orders` e, per ogni anomalia trovata, apri un
-incident — ma prima controlla sempre con `search_incidents` che non esista
-già un incident con lo stesso `correlation_id`, per non duplicare i ticket.
+When asked to check data quality, run these checks on `customers`/`orders`
+and, for each anomaly found, open an incident — but always check first with
+`search_incidents` that an incident with the same `correlation_id` doesn't
+already exist, so tickets aren't duplicated.
 
-## Controlli
+## Checks
 
-1. **Completezza**: `full_name` o `email` NULL/vuoti in `customers`.
-2. **Duplicati**: più righe in `customers` con la stessa `email`.
-3. **Formato/validità**: `email` senza `@`, `phone` con caratteri non
-   numerici (oltre a `+`, spazi, parentesi), `created_at` non in formato
-   `YYYY-MM-DD`.
-4. **Integrità referenziale**: `orders.customer_id` che non esiste in
+1. **Completeness**: NULL/empty `full_name` or `email` in `customers`.
+2. **Duplicates**: multiple rows in `customers` with the same `email`.
+3. **Format/validity**: `email` without `@`, `phone` with non-numeric
+   characters (besides `+`, spaces, parentheses), `created_at` not in
+   `YYYY-MM-DD` format.
+4. **Referential integrity**: `orders.customer_id` that doesn't exist in
    `customers.id`.
 
-## Convenzioni per i ticket
+## Ticket conventions
 
-- `correlation_id`: `dq:<tabella>:<categoria>` (es. `dq:customers:completezza`,
-  `dq:customers:duplicati`, `dq:customers:formato`, `dq:orders:integrita_referenziale`).
-  Un solo ticket per categoria di anomalia, con l'elenco dei record coinvolti
-  nella `description`, non un ticket per riga.
-- `short_description`: breve e in italiano, es. "Data quality: email mancanti
-  in customers".
+- `correlation_id`: `dq:<table>:<category>` (e.g. `dq:customers:completeness`,
+  `dq:customers:duplicates`, `dq:customers:format`,
+  `dq:orders:referential_integrity`). One ticket per anomaly category, with
+  the list of affected records in the `description`, not one ticket per row.
+- `short_description`: short and in English, e.g. "Data quality: missing
+  emails in customers".
 - `category`: `"software"`.
-- `urgency`: `"2"` (media) di default.
+- `urgency`: `"2"` (medium) by default.

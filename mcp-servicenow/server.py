@@ -1,12 +1,12 @@
-"""MCP server minimale per ServiceNow (Table API) via REST.
+"""Minimal MCP server for ServiceNow (Table API) over REST.
 
-Espone due tool:
-- search_incidents(correlation_id): trova incident esistenti con quel
-  correlation_id, per evitare di aprire ticket duplicati.
-- create_incident(...): crea un nuovo incident.
+Exposes two tools:
+- search_incidents(correlation_id): finds existing incidents with that
+  correlation_id, to avoid opening duplicate tickets.
+- create_incident(...): creates a new incident.
 
-Credenziali lette da env (SNOW_INSTANCE_URL, SNOW_USER, SNOW_PASSWORD),
-caricate da .env se presente. Mai hardcoded.
+Credentials read from env (SNOW_INSTANCE_URL, SNOW_USER, SNOW_PASSWORD),
+loaded from .env if present. Never hardcoded.
 """
 import os
 from pathlib import Path
@@ -26,7 +26,7 @@ mcp = MCPServer("servicenow")
 
 @mcp.tool()
 def search_incidents(correlation_id: str) -> list[dict]:
-    """Cerca incident esistenti per correlation_id (per evitare duplicati)."""
+    """Searches existing incidents by correlation_id (to avoid duplicates)."""
     resp = httpx.get(
         f"{INSTANCE_URL}/api/now/table/incident",
         params={
@@ -49,8 +49,8 @@ def create_incident(
     category: str = "software",
     urgency: str = "3",
 ) -> dict:
-    """Crea un incident in ServiceNow. category/urgency usano i valori standard
-    ServiceNow (urgency: 1=alta, 2=media, 3=bassa)."""
+    """Creates an incident in ServiceNow. category/urgency use ServiceNow's
+    standard values (urgency: 1=high, 2=medium, 3=low)."""
     resp = httpx.post(
         f"{INSTANCE_URL}/api/now/table/incident",
         json={
