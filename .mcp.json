@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "sqlite": {
+      "command": "uvx",
+      "args": ["--with", "mcp<2", "mcp-server-sqlite", "--db-path", "data/crm.db"]
+    },
+    "servicenow": {
+      "command": "python",
+      "args": ["mcp-servicenow/server.py"]
+    }
+  }
+}
